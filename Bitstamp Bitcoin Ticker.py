@@ -42,16 +42,17 @@ class bs_Ticker(object):
     #The update method that calls a bunch of other stuff
     def update(self):
         self.tick = ticker()
-        
-        
+
+                
         #self.alarm()
         self.data_tracker()
         self.update_time()
         self.faux_trader()
-        self.last = self.tick['ask']
         self.update_ticker()
         self.update_direction()
         self.debug()
+        #The line below this should run after processing functions for things to work correctly
+        self.last = self.tick['ask']
         self.print_stuff()
         
 
@@ -127,20 +128,20 @@ class bs_Ticker(object):
         except:
             print ("unable to process prices from SQL Database")
         
-        self.file=open("mah_coins.wtf", 'a+')
+        
 
         if self.tick['ask']!=self.last:
             csql.update_prices(self.tick['ask'], datetime.datetime.fromtimestamp(int(self.tick['timestamp'])).strftime("%Y-%m-%d %H:%M:%S"))
-            self.file.write(self.tick['ask']+'\n')
+            
 
-        self.file.close()
+        
 
     def faux_trader(self):
 
         try:
             self.cash, self.bitcoin
         except:
-            self.cash, self.bitcoin=0, 0
+            self.cash, self.bitcoin=0.0, 0.0
         
         self.cash, self.bitcoin=bsql.get_balance()
 
@@ -151,7 +152,7 @@ class bs_Ticker(object):
         except:
             print("\n\nCalculating Average...", end='')
 
-        print ("\n\nCash:    ", self.cash, "\nBitcoin: ", self.bitcoin)
+        print ("\n\nCash:    ", float(self.cash), "\nBitcoin: ", float(self.bitcoin))
             
         
 
