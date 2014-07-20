@@ -37,7 +37,7 @@ class bs_Ticker(object):
         self.last_direction = '--'
         self.tick = ticker()
         self.last = self.tick['ask']
-        os.system("color 8b")
+        os.system("color 5b")
 
     #The update method that calls a bunch of other stuff
     def update(self):
