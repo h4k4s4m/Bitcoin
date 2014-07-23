@@ -38,6 +38,10 @@ class bs_Ticker(object):
         self.tick = ticker()
         self.last = self.tick['ask']
         os.system("color 5b")
+        os.system('cls')
+        for i in range(80):
+            print(".", end='')
+            time.sleep(.05)
 
     #The update method that calls a bunch of other stuff
     def update(self):
@@ -46,7 +50,7 @@ class bs_Ticker(object):
                 
         #self.alarm()
         self.data_tracker()
-        self.update_time()
+        #self.update_time()
         self.faux_trader()
         self.update_ticker()
         self.update_direction()
@@ -135,15 +139,19 @@ class bs_Ticker(object):
             
 
         
-
+#Trader function. Contains trading logic as well as balance reading and writing from the bsql source
     def faux_trader(self):
 
         try:
             self.cash, self.bitcoin
         except:
             self.cash, self.bitcoin=0.0, 0.0
+        engine=sqlalchemy.create_engine('mysql://sam_coin:abc123!@mysql.samarghandi.com/samarghandi_bitcoin')
+        #This bit of code deletes all records older than 48 hours
+        engine.execute("DELETE Coins WHERE Time>= now() - INTERVAL 48 HOUR")
         
         self.cash, self.bitcoin=bsql.get_balance()
+        
 
     def print_stuff(self):
         
