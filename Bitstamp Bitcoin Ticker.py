@@ -21,7 +21,7 @@ import datetime
 #Simple moving average library
 import sma
 #My Sql Connection settings
-import bsql,csql
+import asql,bsql,csql
 
 #Reads the json file at Bitstamps public api (requests must be <600/10minutes)
 def ticker():
@@ -146,11 +146,10 @@ class bs_Ticker(object):
             self.cash, self.bitcoin
         except:
             self.cash, self.bitcoin=0.0, 0.0
-        engine=sqlalchemy.create_engine('mysql://sam_coin:abc123!@mysql.samarghandi.com/samarghandi_bitcoin')
-        #This bit of code deletes all records older than 48 hours
-        engine.execute("DELETE Coins WHERE Time>= now() - INTERVAL 48 HOUR")
-        
+            
         self.cash, self.bitcoin=bsql.get_balance()
+
+        asql.clean_sql_every_x_hours(48)
         
 
     def print_stuff(self):
