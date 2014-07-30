@@ -21,7 +21,7 @@ import datetime
 #Simple moving average library
 import sma
 #My Sql Connection settings
-import asql,bsql,csql
+import asql, bsql, csql
 
 #Reads the json file at Bitstamps public api (requests must be <600/10minutes)
 def ticker():
@@ -39,9 +39,10 @@ class Bs_Ticker(object):
         self.last = self.tick['ask']
         os.system("color 5b")
         os.system('cls')
-        for i in range(80):
-            print(".", end='')
-            time.sleep(.05)
+        #for i in range(80):
+        #    print(".", end='')
+        #    time.sleep(.05)
+        print("Downloading Stuff", end='')
 
     #The update method that calls a bunch of other stuff
     def update(self):
