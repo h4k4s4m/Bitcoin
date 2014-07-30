@@ -28,7 +28,7 @@ def ticker():
     return json.loads(urllib.urlopen('https://www.bitstamp.net/api/ticker/').read())
 
 #My original source was refactored into methods
-class bs_Ticker(object):
+class Bs_Ticker(object):
 
     #Sets up all our stuff for use
     def __init__(self):
@@ -166,7 +166,7 @@ class bs_Ticker(object):
 #Main function that calls an instances of the main class (bs_Ticker) 
 def main():
 
-    t = bs_Ticker()
+    t = Bs_Ticker()
 
     #Updates the object every 5 seconds (probably)
     while True:
