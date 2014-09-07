@@ -147,7 +147,9 @@ class Bs_Ticker(object):
             self.cash, self.bitcoin
         except:
             self.cash, self.bitcoin=0.0, 0.0
-            
+
+        
+        
         self.cash, self.bitcoin=bsql.get_balance()
 
         asql.clean_sql_every_x_hours(48)
