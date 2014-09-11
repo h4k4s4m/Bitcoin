@@ -32,30 +32,20 @@ class Bs_Ticker(object):
 
     #Sets up all our stuff for use
     def __init__(self):
-        self.count_up = 0
-        self.count_down = 0
         self.last_direction = '--'
         self.tick = ticker()
         self.last = self.tick['ask']
         os.system("color 5b")
         os.system('cls')
-        #for i in range(80):
-        #    print(".", end='')
-        #    time.sleep(.05)
         print("Downloading Stuff", end='')
 
     #The update method that calls a bunch of other stuff
     def update(self):
         self.tick = ticker()
-
-                
-        #self.alarm()
         self.data_tracker()
-        #self.update_time()
         self.faux_trader()
         self.update_ticker()
         self.update_direction()
-        self.debug()
         #The line below this should run after processing functions for things to work correctly
         self.last = self.tick['ask']
         self.print_stuff()
@@ -69,53 +59,18 @@ class Bs_Ticker(object):
         print(" " * (len(self.output) /2 - len(self.header)/2) + self.header)
         print(self.output, end='')
 
-    def update_time(self):
-        self.file2=open('last updated.wtf', 'a+')
-        self.file2.seek(0,2)
-        if self.file2.tell()==0:
-            self.last_time=420
-        else:
-            self.file2.seek(0)
-            self.last_time=self.file2.readline()
-        
-       # print("\n\n\n" , self.last_time, (int(self.tick['timestamp'])-172800))
-        if int(self.last_time)<(int(self.tick['timestamp'])-172800) or self.last_time is 420:
-            self.file2.close()
-            open("mah_coins.wtf", 'w').close
-            self.file2=open('last updated.wtf', 'w')
-            open('last updated.wtf', 'w')
-            self.file2.write(unicode(self.tick['timestamp']))
-            self.last_time=int(self.tick['timestamp'])
-        self.file2.close()
 
     #Draws the direction of the last move
     def update_direction(self):
         if self.tick['ask'] > self.last:
-            self.count_up += 1
             self.last_direction = "^^"
             print(self.last_direction, end='')
         elif self.tick['ask'] < self.last:
-            self.count_down += 1
             self.last_direction = "vv"
             print(self.last_direction, end='')
         else:
             print(self.last_direction, end='')
 
-    #Draws a warning on the screen guessing if the prices is going to make a major shift
-    #This will be replaced with more robust logic
-    def alarm(self):
-        if self.count_up==self.count_down+5:
-            self.system_warning = "PRICE GOING UP!"
-        elif self.count_down == self.count_up+5:
-            self.system_warning = "PRICE GOING DOWN!"
-        elif math.fabs(self.count_up-self.count_down)<=3:
-            self.system_warning = ""
-        print("\n" + self.system_warning)
-
-    #Shows the count and timestamp which may or may not be hidden later
-    def debug(self):
-        print("\n\nup: " + str(self.count_up), "down: " + str(self.count_down))
-        print("\n"+datetime.datetime.fromtimestamp(int(self.tick['timestamp'])).strftime("%m-%d-%Y %H:%M:%S"), end='')
   
 
     def data_tracker(self):
@@ -140,25 +95,34 @@ class Bs_Ticker(object):
             
 
         
-#Trader function. Contains trading logic as well as balance reading and writing from the bsql source
+    #Trader function. Contains trading logic as well as balance reading and writing from the bsql source
+
     def faux_trader(self):
+    #creating variables
+        self.first_avg=sma.SimpleMovingAverage()
+        self.second_avg=sma.SimpleMovingAverage()
+        try:
+            self.trade_coins, temp=zip(*csql.get_prices())
+        except:
+            pass
+
+        self.first_avg.set(11, self.trade_coins)
+        self.second_avg.set(25, self.trade_coins)
 
         try:
             self.cash, self.bitcoin
         except:
-            self.cash, self.bitcoin=0.0, 0.0
+            self.cash, self.bitcoin=0.0, 0.0       
 
-        
         
         self.cash, self.bitcoin=bsql.get_balance()
-
         asql.clean_sql_every_x_hours(48)
         
 
     def print_stuff(self):
         
         try:
-            print("\n\nThe average price is:",self.average.calculate()[-1], end='') #"as of", datetime.datetime.fromtimestamp(float(self.last_time)).strftime('%Y-%m-%d %H:%M:%S'),  end='')
+            print("\n\nThe average price is:",self.average.calculate()[-1], end='')
         except:
             print("\n\nCalculating Average...", end='')
 
